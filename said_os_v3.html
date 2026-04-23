@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Said OS v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --s1: #111118;
+    --s2: #18181f;
+    --border: #2d2d3d;
+    --gold: #f5c842;
+    --blue: #3d7fff;
+    --green: #2dce89;
+    --red: #f5365c;
+    --purple: #9b59b6;
+    --orange: #fd7e14;
+    --teal: #1abc9c;
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --dim: #444460;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; padding:16px 14px 80px; font-size:15px; }
+  .wrap { max-width:680px; margin:0 auto; }
+
+  /* NAV */
+  .nav { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:24px; position:sticky; top:0; background:var(--bg); padding:10px 0; z-index:100; border-bottom:1px solid var(--border); }
+  .nav a { font-family:'Space Mono',monospace; font-size:9px; padding:5px 10px; border-radius:20px; background:var(--s1); border:1px solid var(--border); color:var(--muted); text-decoration:none; transition:all .2s; }
+  .nav a:hover, .nav a.active { background:var(--gold); color:#000; border-color:var(--gold); }
+
+  /* HEADER */
+  .hdr { text-align:center; padding:20px 0 28px; }
+  .hdr-label { font-family:'Space Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:4px; margin-bottom:6px; }
+  .hdr h1 { font-family:'Syne',sans-serif; font-size:42px; font-weight:800; line-height:1; }
+  .hdr h1 span { color:var(--gold); }
+  .hdr-sub { font-size:11px; color:var(--muted); font-family:'Space Mono',monospace; margin-top:4px; }
+
+  /* STATUS STRIP */
+  .strip { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:24px; }
+  .strip-item { background:var(--s1); border:1px solid var(--border); border-radius:10px; padding:10px 8px; text-align:center; }
+  .strip-label { font-family:'Space Mono',monospace; font-size:8px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+  .strip-val { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; }
+  .g { color:var(--gold); } .b { color:var(--blue); } .gr { color:var(--green); } .r { color:var(--red); }
+
+  /* SECTION */
+  .sec { margin-bottom:32px; }
+  .sec-title { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:3px; text-transform:uppercase; padding:10px 0 12px; border-bottom:1px solid var(--border); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .sec-num { color:var(--gold); }
+
+  /* CARDS GRID */
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+
+  /* PILAR CARD */
+  .pilar { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:14px 12px; position:relative; overflow:hidden; }
+  .pilar::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
+  .p-trading::before { background:var(--gold); }
+  .p-datos::before { background:var(--blue); }
+  .p-med::before { background:var(--green); }
+  .p-personal::before { background:var(--purple); }
+  .p-fin::before { background:var(--orange); }
+  .p-mec::before { background:var(--red); }
+  .pilar-icon { font-size:20px; margin-bottom:6px; }
+  .pilar-name { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; margin-bottom:3px; }
+  .pilar-desc { font-size:11px; color:var(--muted); line-height:1.4; margin-bottom:8px; }
+  .tags { display:flex; flex-wrap:wrap; gap:3px; }
+  .tag { font-family:'Space Mono',monospace; font-size:8px; padding:2px 5px; border-radius:4px; background:var(--s2); border:1px solid var(--border); color:var(--muted); }
+
+  /* METRIC ROWS */
+  .mrow { background:var(--s1); border:1px solid var(--border); border-radius:10px; padding:11px 14px; margin-bottom:7px; display:flex; gap:10px; align-items:flex-start; }
+  .mrow-id { font-family:'Space Mono',monospace; font-size:10px; color:var(--gold); min-width:32px; padding-top:2px; }
+  .mrow-body {}
+  .mrow-name { font-size:13px; font-weight:500; margin-bottom:2px; }
+  .mrow-desc { font-size:12px; color:#9a9ab8; line-height:1.6; }
+  .mrow-pill { display:inline-block; font-size:9px; padding:1px 7px; border-radius:10px; margin-top:4px; font-family:'Space Mono',monospace; }
+  .pill-trading { background:rgba(245,200,66,.12); color:var(--gold); }
+  .pill-datos { background:rgba(61,127,255,.12); color:var(--blue); }
+  .pill-med { background:rgba(45,206,137,.12); color:var(--green); }
+  .pill-personal { background:rgba(155,89,182,.12); color:var(--purple); }
+  .pill-fin { background:rgba(253,126,20,.12); color:var(--orange); }
+
+  /* APP MAP */
+  .app-block { background:var(--s1); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+  .app-block-hdr { display:flex; align-items:center; gap:10px; padding:11px 14px; background:var(--s2); border-bottom:1px solid var(--border); cursor:pointer; }
+  .app-block-time { font-family:'Space Mono',monospace; font-size:10px; color:var(--gold); min-width:70px; }
+  .app-block-label { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
+  .app-block-body { padding:10px 14px; display:none; flex-direction:column; gap:6px; }
+  .app-block-body.open { display:flex; }
+  .app-row { display:flex; gap:10px; align-items:flex-start; padding:8px 10px; background:var(--bg); border-radius:8px; border-left:3px solid; }
+  .ar-trading { border-color:var(--gold); }
+  .ar-datos { border-color:var(--blue); }
+  .ar-med { border-color:var(--green); }
+  .ar-personal { border-color:var(--purple); }
+  .ar-fin { border-color:var(--orange); }
+  .ar-mec { border-color:var(--red); }
+  .ar-sleep { border-color:var(--dim); }
+  .app-name { font-size:12px; font-weight:600; min-width:100px; }
+  .app-use { font-size:12px; color:#9a9ab8; line-height:1.5; }
+  .app-freq { font-family:'Space Mono',monospace; font-size:9px; color:var(--dim); margin-top:2px; }
+
+  /* WEEK DAYS */
+  .day-card { background:var(--s1); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+  .day-hdr { display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--s2); cursor:pointer; border-bottom:1px solid var(--border); }
+  .day-name { font-family:'Syne',sans-serif; font-weight:800; font-size:16px; min-width:100px; }
+  .day-focus { font-size:11px; color:var(--muted); flex:1; }
+  .day-gtags { display:flex; gap:4px; }
+  .dtag { font-size:9px; padding:2px 7px; border-radius:10px; font-weight:500; }
+  .dt-t { background:rgba(245,200,66,.13); color:var(--gold); }
+  .dt-d { background:rgba(61,127,255,.13); color:var(--blue); }
+  .dt-m { background:rgba(45,206,137,.13); color:var(--green); }
+  .dt-p { background:rgba(155,89,182,.13); color:var(--purple); }
+  .dt-f { background:rgba(253,126,20,.13); color:var(--orange); }
+  .dt-x { background:rgba(245,54,92,.13); color:var(--red); }
+  .dt-z { background:rgba(255,255,255,.06); color:var(--muted); }
+  .day-body { padding:10px 14px; display:none; flex-direction:column; gap:6px; }
+  .day-body.open { display:flex; }
+  .tblock { display:flex; gap:10px; padding:8px 10px; background:var(--bg); border-radius:8px; border-left:3px solid; }
+  .tb-t { border-color:var(--gold); }
+  .tb-d { border-color:var(--blue); }
+  .tb-m { border-color:var(--green); }
+  .tb-p { border-color:var(--purple); }
+  .tb-f { border-color:var(--orange); }
+  .tb-x { border-color:var(--red); }
+  .tb-z { border-color:var(--dim); }
+  .tb-time { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); min-width:72px; padding-top:2px; flex-shrink:0; }
+  .tb-title { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .tb-detail { font-size:12px; color:#9a9ab8; line-height:1.6; }
+  .tb-met { font-family:'Space Mono',monospace; font-size:9px; color:var(--dim); margin-top:3px; }
+
+  /* MEDITATION PROTOCOL */
+  .proto-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px; }
+  .proto-card { background:var(--s1); border:1px solid var(--border); border-radius:10px; padding:12px 10px; text-align:center; }
+  .proto-num { font-family:'Space Mono',monospace; font-size:20px; color:var(--gold); font-weight:700; margin-bottom:4px; }
+  .proto-name { font-size:11px; font-weight:600; margin-bottom:4px; }
+  .proto-count { font-size:10px; color:var(--muted); }
+  .proto-example { background:var(--s1); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .proto-ex-title { font-family:'Space Mono',monospace; font-size:10px; color:var(--gold); margin-bottom:8px; }
+  .proto-ex-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .proto-ex-code { font-family:'Space Mono',monospace; font-size:12px; color:var(--gold); min-width:50px; }
+  .proto-ex-desc { font-size:12px; color:var(--muted); }
+
+  /* NOTION MAP */
+  .notion-section { background:var(--s1); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+  .notion-hdr { padding:11px 14px; background:var(--s2); border-bottom:1px solid var(--border); }
+  .notion-hdr-label { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:2px; }
+  .notion-hdr-name { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; }
+  .notion-body { padding:10px 14px; }
+  .notion-row { display:flex; gap:10px; margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .notion-row:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+  .notion-when { font-family:'Space Mono',monospace; font-size:9px; color:var(--gold); min-width:80px; padding-top:2px; }
+  .notion-what { font-size:13px; color:var(--text); line-height:1.6; }
+
+  /* RULES */
+  .rule { display:flex; gap:12px; padding:11px 14px; background:var(--s1); border:1px solid var(--border); border-radius:10px; margin-bottom:7px; }
+  .rule-n { font-family:'Space Mono',monospace; font-size:11px; color:var(--gold); min-width:24px; padding-top:1px; }
+  .rule-t { font-size:13px; line-height:1.5; }
+
+  /* COOK */
+  .cook-row { display:flex; flex-wrap:wrap; gap:6px; }
+  .cook { padding:6px 12px; border-radius:20px; font-size:12px; border:1px solid; }
+  .cook.on { background:rgba(45,206,137,.1); color:var(--green); border-color:rgba(45,206,137,.3); font-weight:600; }
+  .cook.off { background:rgba(255,255,255,.03); color:var(--muted); border-color:var(--border); }
+
+  /* TOGGLE */
+  .tog { margin-left:auto; background:none; border:none; color:var(--muted); font-size:14px; cursor:pointer; transition:transform .2s; padding:2px 6px; }
+  .tog.open { transform:rotate(180deg); }
+
+  /* FOOTER */
+  .foot { text-align:center; font-family:'Space Mono',monospace; font-size:9px; color:var(--dim); margin-top:40px; line-height:2; }
+  .foot span { color:var(--gold); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#pilares">Pilares</a>
+  <a href="#metricas">M01–M12</a>
+  <a href="#meditacion">Meditación</a>
+  <a href="#apps">Apps</a>
+  <a href="#semana">Semana</a>
+  <a href="#notion">Notion</a>
+  <a href="#reglas">Reglas</a>
+  <a href="#excel">Excel</a>
+  <a href="#plansem">Plan Sem.</a>
+</nav>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-label">⬡ Sistema Operativo</div>
+  <h1>SAID <span>OS</span></h1>
+  <div class="hdr-sub">Q2 2026 · v3.0 · Tijuana</div>
+</div>
+
+<!-- STATUS -->
+<div class="strip">
+  <div class="strip-item"><div class="strip-label">Demo</div><div class="strip-val g">10/50</div></div>
+  <div class="strip-item"><div class="strip-label">Hábitos</div><div class="strip-val b">33%</div></div>
+  <div class="strip-item"><div class="strip-label">Sin fumar</div><div class="strip-val gr">~22d</div></div>
+  <div class="strip-item"><div class="strip-label">Balance</div><div class="strip-val r">−1.6k</div></div>
+  <div class="strip-item"><div class="strip-label">Sprint</div><div class="strip-val b">5</div></div>
+</div>
+
+<!-- ① PILARES -->
+<div class="sec" id="pilares">
+  <div class="sec-title"><span class="sec-num">①</span> Pilares</div>
+  <div class="grid2">
+    <div class="pilar p-trading">
+      <div class="pilar-icon">📈</div>
+      <div class="pilar-name">Trading</div>
+      <div class="pilar-desc">XAU/USD · E2/E3 · London/NY · objetivo financiero principal</div>
+      <div class="tags"><span class="tag">M04</span><span class="tag">M05</span><span class="tag">M06</span></div>
+    </div>
+    <div class="pilar p-datos">
+      <div class="pilar-icon">🔬</div>
+      <div class="pilar-name">Análisis Datos</div>
+      <div class="pilar-desc">TripleTen · Python/Pandas · Sprint 5 activo</div>
+      <div class="tags"><span class="tag">M11</span><span class="tag">M12</span></div>
+    </div>
+    <div class="pilar p-med">
+      <div class="pilar-icon">🩺</div>
+      <div class="pilar-name">Medicina</div>
+      <div class="pilar-desc">Casos clínicos · licencia activa · ENARM eventual</div>
+      <div class="tags"><span class="tag">M07</span><span class="tag">M08</span></div>
+    </div>
+    <div class="pilar p-personal">
+      <div class="pilar-icon">🧠</div>
+      <div class="pilar-name">Personal</div>
+      <div class="pilar-desc">Autorregulación · sueño · cuerpo · meditación</div>
+      <div class="tags"><span class="tag">M01</span><span class="tag">M02</span><span class="tag">M03</span></div>
+    </div>
+    <div class="pilar p-fin">
+      <div class="pilar-icon">💰</div>
+      <div class="pilar-name">Finanzas</div>
+      <div class="pilar-desc">Control mensual · Rosarito · deuda cero</div>
+      <div class="tags"><span class="tag">M09</span><span class="tag">M10</span></div>
+    </div>
+    <div class="pilar p-mec">
+      <div class="pilar-icon">🔧</div>
+      <div class="pilar-name">Mecánica</div>
+      <div class="pilar-desc">Cadillac SRX · Udemy · clases dom. · desconexión</div>
+      <div class="tags"><span class="tag">desconexión</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ② MÉTRICAS M01-M12 -->
+<div class="sec" id="metricas">
+  <div class="sec-title"><span class="sec-num">②</span> Métricas M01–M12</div>
+
+  <div class="mrow">
+    <div class="mrow-id">M01</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Error cometido</div>
+      <div class="mrow-desc">Registras cuándo rompiste una regla o tomaste una decisión que sabes fue incorrecta. No es castigo — es dato. Anota en Liven qué fue, por qué, y qué cambias.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando domines el registro básico → agrega contexto emocional (¿cómo estabas antes del error?).</div>
+      <span class="mrow-pill pill-personal">Personal</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M02</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Día en control</div>
+      <div class="mrow-desc">¿Seguiste tu sistema ese día? Tick = sí. No significa perfección — significa que operaste desde intención, no desde impulso. Es tu métrica de autorregulación base.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas 30 días de datos → analiza qué días de la semana tienes más control y por qué.</div>
+      <span class="mrow-pill pill-personal">Personal</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M03</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Decisión difícil ejecutada</div>
+      <div class="mrow-desc">Hiciste algo que tu mente resistía pero sabías que debías hacer. Puede ser no abrir un trade cuando querías, decir no, o hacer algo incómodo con intención.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> categoriza tus decisiones difíciles por tipo (trading, personal, financiero) para ver dónde más resistes.</div>
+      <span class="mrow-pill pill-personal">Personal</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M04</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Trabajo trader ejecutado</div>
+      <div class="mrow-desc">Abriste TradingView con intención, analizaste el mercado, y operaste o documentaste observación. No cuenta "revisar" el precio en el celular.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas 20+ días → agrega columna de sesión (London/NY) para ver cuál produce más.</div>
+      <span class="mrow-pill pill-trading">Trading</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M05</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Validación de sistema</div>
+      <div class="mrow-desc">Estudiaste teoría de trading (Tradeando, XTB, Tradimo) O hiciste análisis post-mortem de un trade. No es operar — es mejorar el edge.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando llegues a 30 trades → usa NotebookLM para analizar patrones en tus notas de estudio vs tus resultados.</div>
+      <span class="mrow-pill pill-trading">Trading</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M06</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Operativa respetada</div>
+      <div class="mrow-desc">¿Seguiste el checklist de E2/E3? ¿No entraste en Asia? ¿No pasaste de 2 trades? Tick = todas las reglas respetadas ese día. Un solo quebrantamiento = no tick.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas datos → identifica qué regla rompes más seguido y crea una alerta específica para esa.</div>
+      <span class="mrow-pill pill-trading">Trading</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M07</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Trabajo clínico realizado</div>
+      <div class="mrow-desc">Hiciste algo de medicina con intención: caso clínico, video médico, repaso de guía clínica. Mínimo 10 minutos con foco real.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas rutina establecida → agrega subtipo (caso/guía/farmacología) para identificar qué área necesitas más.</div>
+      <span class="mrow-pill pill-med">Medicina</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M08</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Casos clínicos</div>
+      <div class="mrow-desc">Específicamente resolviste un caso clínico completo — presentación, diagnóstico diferencial, plan. No es leer un resumen, es razonar un caso.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas 20+ casos → organízalos por sistema en Notion para ver tus gaps de conocimiento.</div>
+      <span class="mrow-pill pill-med">Medicina</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M09</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Educación financiera</div>
+      <div class="mrow-desc">Estudiaste algo sobre finanzas personales, inversión, o economía (Acelera Academy, Investmate, Rankia). No es revisar tu saldo — es aprender.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas base sólida → conecta lo aprendido directamente a decisiones de tu Sheet de finanzas.</div>
+      <span class="mrow-pill pill-fin">Finanzas</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M10</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Control financiero ejecutado</div>
+      <div class="mrow-desc">Registraste un movimiento en tu Sheet de finanzas o revisaste tu presupuesto con intención. El jueves es el día natural de esta métrica.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas 3 meses de datos → usa Python de TripleTen para analizar tus propios patrones de gasto.</div>
+      <span class="mrow-pill pill-fin">Finanzas</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M11</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Trabajo analista ejecutado</div>
+      <div class="mrow-desc">Hiciste un ejercicio de TripleTen, viste un video del sprint, o practicaste Python/Pandas con intención. Mínimo 30 minutos de trabajo activo.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando termines Sprint 5 → agrega subtipo (SQL/Python/visualización) para ver qué dominas más.</div>
+      <span class="mrow-pill pill-datos">Análisis Datos</span>
+    </div>
+  </div>
+
+  <div class="mrow">
+    <div class="mrow-id">M12</div>
+    <div class="mrow-body">
+      <div class="mrow-name">Ejercicios completados</div>
+      <div class="mrow-desc">Entregables completados de TripleTen — los que se envían y se revisan. No es práctica libre, es producción real. KPI: ≥3 por semana.</div>
+      <div class="mrow-desc" style="margin-top:4px"><b>Siguiente nivel:</b> cuando tengas 10+ entregables → revisa cuáles tardaste más y por qué, para calibrar tu tiempo por sprint.</div>
+      <span class="mrow-pill pill-datos">Análisis Datos</span>
+    </div>
+  </div>
+</div>
+
+<!-- ③ PROTOCOLO MEDITACIÓN -->
+<div class="sec" id="meditacion">
+  <div class="sec-title"><span class="sec-num">③</span> Protocolo de meditación</div>
+
+  <div class="proto-grid">
+    <div class="proto-card">
+      <div class="proto-num">1</div>
+      <div class="proto-name">Descalcificar</div>
+      <div class="proto-count">5 audios en Drive</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">2</div>
+      <div class="proto-name">Meditación</div>
+      <div class="proto-count">10 audios en Drive</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">3</div>
+      <div class="proto-name">Frecuencia CIA</div>
+      <div class="proto-count">5 audios en Drive</div>
+    </div>
+  </div>
+
+  <div class="proto-example">
+    <div class="proto-ex-title">SECUENCIA DEL DÍA — cómo avanzas</div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 1 → 1.1.1</div><div class="proto-ex-desc">Descalc #1 · Meditación #1 · CIA #1</div></div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 2 → 2.2.2</div><div class="proto-ex-desc">Descalc #2 · Meditación #2 · CIA #2</div></div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 3 → 3.3.3</div><div class="proto-ex-desc">Descalc #3 · Meditación #3 · CIA #3</div></div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 4 → 4.4.4</div><div class="proto-ex-desc">Descalc #4 · Meditación #4 · CIA #4</div></div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 5 → 5.5.5</div><div class="proto-ex-desc">Descalc #5 · Meditación #5 · CIA #5</div></div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 6 → 1.6.1</div><div class="proto-ex-desc">Descalc #1 (reinicia) · Meditación #6 · CIA #1 (reinicia)</div></div>
+    <div class="proto-ex-row"><div class="proto-ex-code">Día 7 → 2.7.2</div><div class="proto-ex-desc">Descalc #2 · Meditación #7 · CIA #2</div></div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);">
+      El número registrado en Ultiself es el código del día (ej: <span style="color:var(--gold);font-family:'Space Mono',monospace">2.6.3</span>). Eso te dice exactamente qué audio pusiste.
+    </div>
+  </div>
+</div>
+
+<!-- ④ MAPA DE APPS -->
+<div class="sec" id="apps">
+  <div class="sec-title"><span class="sec-num">④</span> Cuándo usar cada app</div>
+
+  <!-- 5:00–6:30 AM -->
+  <div class="app-block">
+    <div class="app-block-hdr" onclick="tog(this)">
+      <div class="app-block-time">5:00–6:30am</div>
+      <div class="app-block-label">Bloque de mañana</div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="app-block-body">
+      <div class="app-row ar-personal">
+        <div class="app-name">Drive (Biocódigo)</div>
+        <div><div class="app-use">Abres la carpeta BIOCODIGO SECRETO GATEWAY. Pones el audio según tu código del día (X.X.X). 15–20 min antes de ver el mercado.</div><div class="app-freq">Diario · antes del trading</div></div>
+      </div>
+      <div class="app-row ar-personal">
+        <div class="app-name">Mental Health</div>
+        <div><div class="app-use">Respiración de ansiedad (2 min) al despertar si hay tensión. La meditación "Pausa" la puedes usar en el trabajo. Historias para dormir solo de noche.</div><div class="app-freq">Mañana + trabajo + noche</div></div>
+      </div>
+      <div class="app-row ar-trading">
+        <div class="app-name">TradingView</div>
+        <div><div class="app-use">Sesión Londres activa. Atlas mirando contigo. Claude abierto para registrar. Máx 2 trades E2/E3. Se cierra al terminar la sesión.</div><div class="app-freq">5:30–6:30am · L-V</div></div>
+      </div>
+      <div class="app-row ar-personal">
+        <div class="app-name">Ultiself</div>
+        <div><div class="app-use">Primer tick del día al terminar la sesión de mañana. Marcas: meditación (con código), trading, sol. No lo abres antes — primero ejecutas.</div><div class="app-freq">~6:30am y ~9pm</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- En el trabajo -->
+  <div class="app-block">
+    <div class="app-block-hdr" onclick="tog(this)">
+      <div class="app-block-time">7am–5pm</div>
+      <div class="app-block-label">En el trabajo</div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="app-block-body">
+      <div class="app-row ar-med">
+        <div class="app-name">MediSearch / mdcalc</div>
+        <div><div class="app-use">En horas muertas del trabajo. MediSearch para buscar evidencia rápida de casos. mdcalc para calcular scores clínicos. 10 min max por sesión.</div><div class="app-freq">Horas muertas · diario</div></div>
+      </div>
+      <div class="app-row ar-med">
+        <div class="app-name">Reto MD</div>
+        <div><div class="app-use">Un caso clínico rápido. Es tu M08. No lo dejes para la noche — en el trabajo es cuando tienes contexto médico fresco.</div><div class="app-freq">Martes y jueves principalmente</div></div>
+      </div>
+      <div class="app-row ar-mec">
+        <div class="app-name">Udemy (mecánica)</div>
+        <div><div class="app-use">Video corto de mecánica en horas muertas. Solo miércoles y viernes — no interfiere con medicina ni datos que van otros días.</div><div class="app-freq">Mié y vie · 10–15 min</div></div>
+      </div>
+      <div class="app-row ar-personal">
+        <div class="app-name">Mental Health (trabajo)</div>
+        <div><div class="app-use">Meditación "Pausa en el trabajo" (6 min) en hora de comida o momento de tensión. No en teléfono visible — usa audífonos discreto.</div><div class="app-freq">Cuando necesites · no a diario forzado</div></div>
+      </div>
+      <div class="app-row ar-datos">
+        <div class="app-name">Anki / LearnAI</div>
+        <div><div class="app-use">Inglés en el trabajo. Frases del día, vocabulario activo. 10 min. Jueves es el día prioritario de inglés en tu semana.</div><div class="app-freq">L-V · 10 min · trabajo</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5pm–8pm -->
+  <div class="app-block">
+    <div class="app-block-hdr" onclick="tog(this)">
+      <div class="app-block-time">5–8pm</div>
+      <div class="app-block-label">Bloque estudio / datos</div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="app-block-body">
+      <div class="app-row ar-personal">
+        <div class="app-name">Bend</div>
+        <div><div class="app-use">Estiramientos al llegar a casa o post-gym. 5–10 min. Contrarresta horas sentado en el trabajo. Miércoles y sábado que no vas al gym.</div><div class="app-freq">Post-gym o al llegar a casa</div></div>
+      </div>
+      <div class="app-row ar-datos">
+        <div class="app-name">TripleTen (browser)</div>
+        <div><div class="app-use">Lunes y miércoles: ejercicios Python/Pandas. Sábado: entregable formal. Cuando tengas duda técnica profunda → Gemini. Para organizar notas → Claude.</div><div class="app-freq">L, Mié, Sáb</div></div>
+      </div>
+      <div class="app-row ar-trading">
+        <div class="app-name">ScreenApp + Tradeando</div>
+        <div><div class="app-use">Martes y sábado: ves un video de Tradeando con ScreenApp grabando. Al terminar el video, ScreenApp genera notas. Le pasas las notas a Claude y las organizo en Notion.</div><div class="app-freq">Mar y Sáb</div></div>
+      </div>
+      <div class="app-row ar-datos">
+        <div class="app-name">Gemini / NotebookLM</div>
+        <div><div class="app-use">Gemini: dudas técnicas de Python o trading. NotebookLM: los sábados, carga el módulo completo de Tradeando y úsalo para examinarte. No para ejecutar tareas.</div><div class="app-freq">Cuando estudias · sábados profundos</div></div>
+      </div>
+      <div class="app-row ar-personal">
+        <div class="app-name">Impulse / Peak</div>
+        <div><div class="app-use">Plasticidad cerebral. 10 min antes de sesión de estudio para calentar el cerebro. No como hábito de entretenimiento — como herramienta de activación.</div><div class="app-freq">Antes de bloques de estudio · 10 min</div></div>
+      </div>
+      <div class="app-row ar-fin">
+        <div class="app-name">Hojas de cálculo</div>
+        <div><div class="app-use">Solo sábados: registro semanal completo. Jueves: revisión rápida de finanzas del mes (10 min). Nunca abrir para "ver" sin registrar algo.</div><div class="app-freq">Sáb (registro) · Jue (revisión)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8pm–10pm -->
+  <div class="app-block">
+    <div class="app-block-hdr" onclick="tog(this)">
+      <div class="app-block-time">8–10pm</div>
+      <div class="app-block-label">Cierre del día</div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="app-block-body">
+      <div class="app-row ar-personal">
+        <div class="app-name">Liven</div>
+        <div><div class="app-use">Descarga escrita del día. 5–10 min. Registras M01 (error del día si hubo), M03 (decisión difícil). No es diario motivacional — es vaciado mental sin filtro.</div><div class="app-freq">Noche · antes de Ultiself</div></div>
+      </div>
+      <div class="app-row ar-personal">
+        <div class="app-name">Ultiself (noche)</div>
+        <div><div class="app-use">Cierre del día: calificación global, estado ánimo, TMI completado. Mañana ya registraste lo importante — la noche es solo el cierre de loop.</div><div class="app-freq">9pm · diario</div></div>
+      </div>
+      <div class="app-row ar-personal">
+        <div class="app-name">GPT (captura noche)</div>
+        <div><div class="app-use">Tomas captura del diario de Ultiself y se la mandas a GPT. GPT analiza qué completaste, qué faltó, y te da las 3 tareas críticas del día siguiente.</div><div class="app-freq">9pm · diario</div></div>
+      </div>
+      <div class="app-row ar-sleep">
+        <div class="app-name">Mental Health (dormir)</div>
+        <div><div class="app-use">Historia para dormir o música relajante. Pantallas apagadas a las 9:30pm. Esta app es lo último que usas antes de dormir.</div><div class="app-freq">9:30pm · apagar pantallas</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solo fin de semana -->
+  <div class="app-block">
+    <div class="app-block-hdr" onclick="tog(this)">
+      <div class="app-block-time">Fines de semana</div>
+      <div class="app-block-label">Apps de profundidad</div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="app-block-body">
+      <div class="app-row ar-personal">
+        <div class="app-name">Fitia</div>
+        <div><div class="app-use">Miércoles y domingos cuando cocinas: Fitia define el menú de 3 días. No lo abres a diario — defines el plan 2 veces a la semana y sigues.</div><div class="app-freq">Mié y Dom · al cocinar</div></div>
+      </div>
+      <div class="app-row ar-mec">
+        <div class="app-name">BetterMe / Bend</div>
+        <div><div class="app-use">Sábados: ejercicio largo. BetterMe si quieres rutina estructurada de gym o cardio. Bend para movilidad y estiramiento post-sesión larga.</div><div class="app-freq">Sáb · bloque de ejercicio</div></div>
+      </div>
+      <div class="app-row ar-datos">
+        <div class="app-name">NotebookLM</div>
+        <div><div class="app-use">Sábado tarde: cargas un módulo completo (Tradeando o TripleTen). Te hace preguntas, te examina. Es tu simulador de examen. No para tomar notas — para consolidar.</div><div class="app-freq">Sáb · consolidación profunda</div></div>
+      </div>
+      <div class="app-row ar-trading">
+        <div class="app-name">Investing / Investmate</div>
+        <div><div class="app-use">Domingo: contexto macroeconómico de la semana. Revisar calendarios económicos (NFP, FOMC, CPI). Define el bias del mercado para la semana siguiente.</div><div class="app-freq">Dom mañana · contexto semanal</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ SEMANA -->
+<div class="sec" id="semana">
+  <div class="sec-title"><span class="sec-num">⑤</span> Semana estructurada</div>
+
+  <!-- LUNES -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">LUNES</div>
+      <div class="day-focus">Trading + Datos + OKR</div>
+      <div class="day-gtags"><span class="dtag dt-t">Trading</span><span class="dtag dt-d">Datos</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">5:00–5:25</div><div><div class="tb-title">Ritual + Biocódigo</div><div class="tb-detail">Drive → audio X.X.X del día · Mental Health respiración si hay tensión · sol 10 min</div><div class="tb-met">M02 día_en_control</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">5:30–6:30</div><div><div class="tb-title">Sesión Londres + OKR Review</div><div class="tb-detail">TradingView + Atlas + Claude · máx 2 trades E2/E3 · Lunes = revisar OKRs y KPIs de la semana pasada (10 min extra)</div><div class="tb-met">M04 · M06</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">Trabajo</div><div><div class="tb-title">Inglés + Caso clínico</div><div class="tb-detail">LearnAI / Anki (10 min) · Reto MD o MediSearch (10 min) · horas muertas</div><div class="tb-met">M07 · M08</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">5:05–5:50pm</div><div><div class="tb-title">Gym — Upper body</div><div class="tb-detail">Saliendo del trabajo · sin pasar por casa · Bend 5 min al llegar</div></div></div>
+      <div class="tblock tb-d"><div class="tb-time">6:30–8:30pm</div><div><div class="tb-title">TripleTen — Sprint activo</div><div class="tb-detail">Python/Pandas · ejercicios · Impulse 10 min antes para activar · Gemini si hay duda técnica</div><div class="tb-met">M11 · M12</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">9:00pm</div><div><div class="tb-title">Cierre</div><div class="tb-detail">Liven · Ultiself noche · captura a GPT · Mental Health dormir · pantallas 9:30</div><div class="tb-met">M01 · M03</div></div></div>
+    </div>
+  </div>
+
+  <!-- MARTES -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">MARTES</div>
+      <div class="day-focus">Trading + Medicina + Tradeando</div>
+      <div class="day-gtags"><span class="dtag dt-t">Trading</span><span class="dtag dt-m">Medicina</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">5:00–5:25</div><div><div class="tb-title">Ritual + Biocódigo</div><div class="tb-detail">Drive audio del día · respiración · sol</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">5:30–6:30</div><div><div class="tb-title">Sesión Londres</div><div class="tb-detail">TradingView + Atlas + Claude · máx 2 trades · registro inmediato</div><div class="tb-met">M04 · M05 · M06</div></div></div>
+      <div class="tblock tb-m"><div class="tb-time">Trabajo</div><div><div class="tb-title">Medicina profunda</div><div class="tb-detail">Martes = más tiempo para medicina · caso completo en Reto MD o video médico · 20 min en horas muertas</div><div class="tb-met">M07 · M08</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">5:05–5:50pm</div><div><div class="tb-title">Gym — Lower body</div><div class="tb-detail">Saliendo del trabajo directo</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">6:30–8:00pm</div><div><div class="tb-title">Tradeando — módulo</div><div class="tb-detail">ScreenApp grabando · video Tradeando · notas generadas → Claude las organiza en Notion · post-mortem trade del día si hubo</div><div class="tb-met">M05</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">9:00pm</div><div><div class="tb-title">Cierre</div><div class="tb-detail">Liven · Ultiself · GPT captura · dormir</div></div></div>
+    </div>
+  </div>
+
+  <!-- MIÉRCOLES -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">MIÉRCOLES</div>
+      <div class="day-focus">Trading + Datos + Cocina</div>
+      <div class="day-gtags"><span class="dtag dt-t">Trading</span><span class="dtag dt-d">Datos</span><span class="dtag dt-p">Cocina</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">5:00–5:25</div><div><div class="tb-title">Ritual + Biocódigo</div><div class="tb-detail">Drive audio · sol · respiración</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">5:30–6:30</div><div><div class="tb-title">Sesión Londres</div><div class="tb-detail">Trading o solo observación documentada si no hay setup limpio · registro en Notion</div><div class="tb-met">M04 · M06</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">6:30–7:00</div><div><div class="tb-title">🍳 Cocina — 3 días</div><div class="tb-detail">Fitia ya definió el menú · cocinas para jue, vie, sáb · sin improvisar</div></div></div>
+      <div class="tblock tb-x"><div class="tb-time">Trabajo</div><div><div class="tb-title">Mecánica — Udemy</div><div class="tb-detail">Video breve Cadillac SRX · hora muerta · desconexión analítica</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">5:05–5:45pm</div><div><div class="tb-title">Caminata / movilidad</div><div class="tb-detail">Miércoles no es gym · Bend al llegar a casa · recuperación activa</div></div></div>
+      <div class="tblock tb-d"><div class="tb-time">6:30–8:30pm</div><div><div class="tb-title">TripleTen — continuación</div><div class="tb-detail">Ejercicio o entregable del sprint · Impulse 10 min antes · Gemini para dudas</div><div class="tb-met">M11 · M12</div></div></div>
+      <div class="tblock tb-f"><div class="tb-time">8:30–9:00pm</div><div><div class="tb-title">Revisión financiera</div><div class="tb-detail">10 min · ¿entró algo? ¿salió algo? · sin análisis profundo hoy</div><div class="tb-met">M09</div></div></div>
+    </div>
+  </div>
+
+  <!-- JUEVES -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">JUEVES</div>
+      <div class="day-focus">Personal profundo + Finanzas</div>
+      <div class="day-gtags"><span class="dtag dt-t">Trading</span><span class="dtag dt-p">Personal</span><span class="dtag dt-f">Finanzas</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">5:00–5:35</div><div><div class="tb-title">Ritual extendido — Ultiself curso</div><div class="tb-detail">Jueves = ritual más largo · Drive audio del día · + un módulo de Ultiself (Sistema de Solidez Mental o Sistema de Mejoramiento Personal) · 30 min total</div><div class="tb-met">M02 · M03</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">5:35–6:30</div><div><div class="tb-title">Sesión Londres</div><div class="tb-detail">Trading o análisis de mercado · registro Notion</div><div class="tb-met">M04 · M06</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">Trabajo</div><div><div class="tb-title">Inglés prioritario</div><div class="tb-detail">Jueves = inglés con más tiempo · LearnAI, Radio Inglés Course o Kale Ander · 20 min en horas muertas</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">5:05–5:50pm</div><div><div class="tb-title">Gym — Upper/funcional</div><div class="tb-detail">Jueves es gym · Peak o Impulse 10 min antes si tienes acceso</div></div></div>
+      <div class="tblock tb-f"><div class="tb-time">6:30–7:30pm</div><div><div class="tb-title">Presupuesto semanal</div><div class="tb-detail">Jueves = planning financiero · ¿qué sale esta semana? · actualizar Sheet de finanzas si hay movimientos</div><div class="tb-met">M10 · M09</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">8:00–9:00pm</div><div><div class="tb-title">Liven — descarga profunda</div><div class="tb-detail">Jueves = escritura más larga · revisión de M01 errores de la semana · qué cambias la próxima</div></div></div>
+    </div>
+  </div>
+
+  <!-- VIERNES -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">VIERNES</div>
+      <div class="day-focus">Trading cierre + Medicina + Recarga</div>
+      <div class="day-gtags"><span class="dtag dt-t">Trading</span><span class="dtag dt-m">Medicina</span><span class="dtag dt-z">Libre</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">5:00–5:25</div><div><div class="tb-title">Ritual + Biocódigo</div><div class="tb-detail">Drive audio · sol · cerrar la semana con energía</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">5:30–6:30</div><div><div class="tb-title">Sesión Londres — cierre semana</div><div class="tb-detail">Último trade de la semana si hay setup · revisión: ¿cumplí ≥80% de días con sesión? ¿operativa respetada?</div><div class="tb-met">M05 · M06</div></div></div>
+      <div class="tblock tb-m"><div class="tb-time">Trabajo</div><div><div class="tb-title">Medicina + Mecánica</div><div class="tb-detail">Caso clínico (Reto MD) + video de mecánica Udemy · viernes tienes ambos</div><div class="tb-met">M07</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">5:05–5:50pm</div><div><div class="tb-title">Gym — cierre semana</div><div class="tb-detail">Viernes es gym · cerrar con cuerpo activo</div></div></div>
+      <div class="tblock tb-z"><div class="tb-time">7:00–9:30pm</div><div><div class="tb-title">Tiempo libre real</div><div class="tb-detail">Sin obligación de aprendizaje · One Piece · libro físico · Azul · Spotify · Crunchyroll si quieres</div></div></div>
+    </div>
+  </div>
+
+  <!-- SÁBADO -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">SÁBADO</div>
+      <div class="day-focus">Registro + Tradeando + Cuerpo</div>
+      <div class="day-gtags"><span class="dtag dt-t">Registro</span><span class="dtag dt-d">Datos</span><span class="dtag dt-x">Mecánica</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">7:00–7:45</div><div><div class="tb-title">📊 Registro semanal — Sheets</div><div class="tb-detail">ÚNICO momento de la semana para Sheets · hábitos 7 días (M01–M12) · trades de la semana · finanzas si hay movimientos · 45 min max</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">8:00–10:00</div><div><div class="tb-title">Tradeando — módulo + post-mortem</div><div class="tb-detail">ScreenApp grabando un módulo completo · notas → Claude → Notion · análisis post-mortem de todos los trades de la semana</div><div class="tb-met">M05</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">10:00–12:00</div><div><div class="tb-title">Ejercicio largo + despensa</div><div class="tb-detail">Parque, parkour, nado, BetterMe · lo que más energía te dé · despensa revisada con Fitia · compras si aplica</div></div></div>
+      <div class="tblock tb-x"><div class="tb-time">3:00–5:00pm</div><div><div class="tb-title">Mecánica — Cadillac</div><div class="tb-detail">Manos en el carro · desconexión total de pantallas · solo herramientas</div></div></div>
+      <div class="tblock tb-d"><div class="tb-time">6:00–8:00pm</div><div><div class="tb-title">TripleTen + NotebookLM</div><div class="tb-detail">Terminar entregable de la semana · luego NotebookLM para examinarte del módulo de Tradeando que viste hoy</div><div class="tb-met">M11 · M12</div></div></div>
+    </div>
+  </div>
+
+  <!-- DOMINGO -->
+  <div class="day-card">
+    <div class="day-hdr" onclick="togDay(this)">
+      <div class="day-name">DOMINGO</div>
+      <div class="day-focus">Contexto + Cocina + Descanso</div>
+      <div class="day-gtags"><span class="dtag dt-t">Contexto</span><span class="dtag dt-p">Cocina</span><span class="dtag dt-z">Libre</span></div>
+      <button class="tog">▾</button>
+    </div>
+    <div class="day-body">
+      <div class="tblock tb-p"><div class="tb-time">8:00–9:00</div><div><div class="tb-title">Planning semanal</div><div class="tb-detail">Notion + Gemini · revisar OKRs · definir 3 tareas críticas por pilar para la semana · lunes ya sabes qué toca</div></div></div>
+      <div class="tblock tb-t"><div class="tb-time">9:00–10:00</div><div><div class="tb-title">Contexto de mercado</div><div class="tb-detail">Domingo = cero trades · solo contexto · Investing: ¿hay NFP? ¿FOMC? ¿CPI? · bias de la semana anotado en Notion</div><div class="tb-met">M05</div></div></div>
+      <div class="tblock tb-p"><div class="tb-time">10:00–12:00</div><div><div class="tb-title">🍳 Cocina — 3 días + orden</div><div class="tb-detail">Fitia define el menú · cocinas para lun, mar, mié · ropa si aplica · orden básico del espacio</div></div></div>
+      <div class="tblock tb-x"><div class="tb-time">2:00–4:00pm</div><div><div class="tb-title">Clases de mecánica</div><div class="tb-detail">Clases presenciales · desconexión total de pantallas · solo aprender con las manos</div></div></div>
+      <div class="tblock tb-z"><div class="tb-time">4:00pm+</div><div><div class="tb-title">Tiempo libre absoluto</div><div class="tb-detail">Sin agenda · Azul · descanso sin culpa · en cama a las 9:30pm para el lunes</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ NOTION — MAPA DE USO -->
+<div class="sec" id="notion">
+  <div class="sec-title"><span class="sec-num">⑥</span> Notion — cuándo llenar qué</div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Regla base</div>
+      <div class="notion-hdr-name">No abres Notion para "ver" — lo abres para registrar algo específico</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">Al terminar trade</div>
+        <div class="notion-what">Le dices a Claude: "entré long en 4727, SL 4716, TP 4748". Claude lo registra en Trading Journal. Tú no abres Notion.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Al estudiar Tradeando</div>
+        <div class="notion-what">ScreenApp genera notas del video. Le pegas el resumen a Claude. Claude organiza en la página de Tradeando en Notion. Tú no escribes en Notion.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Lunes · OKR review</div>
+        <div class="notion-what">Abres Notion tú mismo: vas a OKRs → Objetivos → marcas % de avance semanal. 10 min máximo.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Domingo · planning</div>
+        <div class="notion-what">Abres Notion tú mismo: vas a Registro de Ejecución → creas entrada de la semana → 3 tareas críticas por pilar. Con ayuda de Gemini.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Cuando terminas caso clínico</div>
+        <div class="notion-what">Le dices a Claude el caso y el diagnóstico. Claude lo registra en la sección de Medicina → Casos Clínicos.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Sección en tu Notion</div>
+      <div class="notion-hdr-name">Visión — solo lees, no editas constantemente</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">Inspiración</div>
+        <div class="notion-what">Frases, referencias, personas que admiras. Se actualiza cuando algo te impacta — no tiene frecuencia fija.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Propósito</div>
+        <div class="notion-what">Tu declaración de vida. La lees los domingos durante el planning. No la modificas frecuentemente.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Sección en tu Notion</div>
+      <div class="notion-hdr-name">OKRs — actualizas los lunes</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">Áreas</div>
+        <div class="notion-what">Los 6 pilares. No se modifican en Q2 — son fijos hasta fin de trimestre.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Objetivos / KPIs</div>
+        <div class="notion-what">Actualizas el % de avance los lunes. Claude puede hacerlo por ti si le dices los números.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Tareas</div>
+        <div class="notion-what">Las 3 tareas críticas semanales por pilar. Las defines el domingo, las marcas el lunes siguiente.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Ciclos Q1/Q2/Q3</div>
+        <div class="notion-what">Al final de cada trimestre haces retrospectiva. Q2 cierra en junio. Vas acumulando ahí el historial anual.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Sección en tu Notion</div>
+      <div class="notion-hdr-name">Ejecución — tu puente entre el sistema y la realidad</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">Calendario</div>
+        <div class="notion-what">Eventos importantes: NFP, FOMC, entregas TripleTen, citas. Claude puede crear entradas cuando le dices qué hay esta semana.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Registro de Ejecución</div>
+        <div class="notion-what">Una entrada por semana. Lo que hiciste, lo que no, y por qué. Lo llenas el sábado junto con Sheets. Es tu memoria permanente de progreso.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Finanzas (enlace)</div>
+        <div class="notion-what">Apunta a tu Sheet de finanzas. En Notion solo pones el resumen mensual — el detalle vive en Sheets.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Hábitos (enlace)</div>
+        <div class="notion-what">Apunta a tu Sheet de hábitos. El análisis de patrones vive ahí, no en Notion.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Sección en tu Notion</div>
+      <div class="notion-hdr-name">Conocimiento — se llena solo cuando estudias</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">Trading HQ</div>
+        <div class="notion-what">Journal de trades (Claude llena por ti), notas de Tradeando (via ScreenApp → Claude), estrategias E2/E3 documentadas.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Análisis Datos</div>
+        <div class="notion-what">Notas de TripleTen por sprint. Claude organiza cuando terminas un módulo.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Medicina</div>
+        <div class="notion-what">Casos clínicos resueltos. Claude los registra cuando le describes el caso. Se agrupa por sistema al tener 10+.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Recursos / Herramientas</div>
+        <div class="notion-what">Links de plataformas (Tradeando, XTB, TripleTen, Tradimo). No lo actualizas frecuentemente — es tu directorio.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ REGLAS -->
+<div class="sec" id="reglas">
+  <div class="sec-title"><span class="sec-num">⑦</span> Reglas inamovibles</div>
+
+  <div class="rule"><div class="rule-n">01</div><div class="rule-t">Máximo <b>2 trades por sesión</b>. Al llegar a 2, TradingView se cierra sin excepción.</div></div>
+  <div class="rule"><div class="rule-n">02</div><div class="rule-t"><b>Asia no existe</b> hasta 50 trades documentados en London/NY. No importa el setup.</div></div>
+  <div class="rule"><div class="rule-n">03</div><div class="rule-t"><b>Sin real</b> hasta 50 trades demo con edge positivo. Noctorial espera.</div></div>
+  <div class="rule"><div class="rule-n">04</div><div class="rule-t">Sheets se llena <b>solo sábados</b>. Cualquier otro día que lo abras, rompiste el sistema.</div></div>
+  <div class="rule"><div class="rule-n">05</div><div class="rule-t">Todo trade se registra <b>en el momento</b> vía Claude → Notion. Sin registro no existió.</div></div>
+  <div class="rule"><div class="rule-n">06</div><div class="rule-t">Gym: <b>lunes, martes, jueves, viernes</b>. Miércoles y sábado: movimiento sin estructura. Domingo: descanso real.</div></div>
+  <div class="rule"><div class="rule-n">07</div><div class="rule-t">Cocinas <b>miércoles y domingo únicamente</b>. Cada sesión cubre 3 días. Sin cocinar espontáneo entre semana.</div></div>
+  <div class="rule"><div class="rule-n">08</div><div class="rule-t">GPT recibe captura de Ultiself <b>mañana y noche</b>. Sin esa captura el sistema no aprende.</div></div>
+  <div class="rule"><div class="rule-n">09</div><div class="rule-t">Meditación siempre con <b>código del día</b> (X.X.X) anotado en Ultiself. Sin código = no cuenta.</div></div>
+  <div class="rule"><div class="rule-n">10</div><div class="rule-t">Notion <b>no se abre para ver</b> — solo para registrar algo concreto o el planning del domingo.</div></div>
+
+  <div style="margin-top:20px">
+    <div class="sec-title">🍳 Cocina</div>
+    <div class="cook-row">
+      <span class="cook off">Lun — comes del dom</span>
+      <span class="cook off">Mar — comes del dom</span>
+      <span class="cook on">Mié — cocinas (→ jue/vie/sáb)</span>
+      <span class="cook off">Jue — comes del mié</span>
+      <span class="cook off">Vie — comes del mié</span>
+      <span class="cook off">Sáb — comes del mié</span>
+      <span class="cook on">Dom — cocinas (→ lun/mar/mié)</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ⑧ GUÍA EXCEL -->
+<div class="sec" id="excel">
+  <div class="sec-title"><span class="sec-num">⑧</span> Tus 4 archivos Excel — cuándo y cómo</div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">📊 Archivo 1</div>
+      <div class="notion-hdr-name">Said_Base_Datos_Analista_y_Trading.xlsx</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">¿Qué es?</div>
+        <div class="notion-what">Tu archivo maestro. Contiene Trading Journal, Daily Log de métricas, Descripción del día, registro de Sueño y tabla de métricas M01–M12.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">¿Cuándo?</div>
+        <div class="notion-what"><b>Sábados · 7:00–7:45am.</b> Única vez a la semana. Llenas los 7 días de golpe — no a diario.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Trading Journal</div>
+        <div class="notion-what">Cada trade que hiciste en la semana: fecha, cuenta, sesión, estrategia, dirección, entrada, SL, TP, resultado. Claude te ayuda a recordar los datos si los registraste conmigo durante la sesión.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Daily Log</div>
+        <div class="notion-what">Una fila por día. Métrica_id (M01–M12) y si se completó (True/False). Son los ticks que hiciste en Ultiself traducidos a datos.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Descripción del día</div>
+        <div class="notion-what">Solo para los días donde hiciste algo importante: minutos invertidos, nivel de comprensión (1–5), insight clave. No lo llenas para cada día — solo cuando hay algo que vale documentar.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Sueño</div>
+        <div class="notion-what">Consumo (si hubo), horas dormidas, lucidez y ansiedad al despertar. Rápido — 30 segundos por día.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">💰 Archivo 2</div>
+      <div class="notion-hdr-name">Finanzas_2026.xlsx</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">¿Qué es?</div>
+        <div class="notion-what">Control financiero mensual. Tiene hoja por mes, reporte anual automático, bola de nieve de deudas y fondos de ahorro.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">¿Cuándo?</div>
+        <div class="notion-what"><b>Jueves · 6:30–7:30pm</b> (revisión semanal rápida) + <b>último sábado del mes</b> (cierre mensual completo).</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Qué llenas</div>
+        <div class="notion-what">Cada gasto o ingreso del mes en la hoja del mes activo (Abr, May, etc). La hoja de configuración define tus categorías — no la modifiques seguido. Bola de nieve: solo cuando hay cambio en una deuda.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Alerta activa</div>
+        <div class="notion-what">Abril: gastos superan ingresos por ~$1,600 MXN. Prioridad del jueves: identificar qué categoría está descontrolada.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">✅ Archivo 3</div>
+      <div class="notion-hdr-name">Habitos.xlsx</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">¿Qué es?</div>
+        <div class="notion-what">Tracker semanal de hábitos. Una hoja por mes. Dashboard automático. Los hábitos que marcas aquí son los mismos que trackeas en Ultiself — son la fuente de datos analítica.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">¿Cuándo?</div>
+        <div class="notion-what"><b>Sábados · junto con el archivo maestro.</b> Llenas la semana de golpe — True/False por cada hábito y día. 10 minutos máximo.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Qué llenas</div>
+        <div class="notion-what">Ve a la hoja del mes actual (Apr). Marca True/False para cada hábito por día. El dashboard se actualiza solo. Datos de abril: 50 hábitos completados de ~300 posibles = 16.7% — hay margen de mejora.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">📋 Archivo 4</div>
+      <div class="notion-hdr-name">Tareas.xlsx</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">¿Qué es?</div>
+        <div class="notion-what">Planeador semanal de tareas + tracker de hábitos por semana. Tienes semanas numeradas (4–14). Cada semana tiene sus hábitos diarios y progreso.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">¿Cuándo?</div>
+        <div class="notion-what"><b>Domingo · planning semanal.</b> Defines las tareas de cada día de la semana. <b>Sábado:</b> marcas qué cumpliste. Gemini toma este plan para generar las alertas diarias.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Flujo con Gemini</div>
+        <div class="notion-what">Domingo llenas el planeador de la semana → le mandas el resumen a Gemini → Gemini te genera alertas accionables por día → cada mañana GPT te recuerda qué toca hoy.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨ PLAN SEMANAL — NOTION + GEMINI -->
+<div class="sec" id="plansem">
+  <div class="sec-title"><span class="sec-num">⑨</span> Plan semanal — Notion → Gemini → Alertas</div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Flujo completo</div>
+      <div class="notion-hdr-name">Cómo planeas la semana y la ejecutas sin pensar</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">Dom 8–9am</div>
+        <div class="notion-what"><b>Abres Notion → Plan semanal.</b> Llenas las tareas clave de cada día (máx 3 por día, una por pilar). No son hábitos — son tareas específicas con resultado concreto.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Dom 9am</div>
+        <div class="notion-what"><b>Le mandas el plan a Gemini.</b> Prompt: "Tengo estos días disponibles [L-V 7am-5pm trabajo, libre 5-9pm] y estas tareas por día [pegas el plan]. Convierte esto en alertas accionables para cada día con horario exacto."</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">L-V mañana</div>
+        <div class="notion-what"><b>GPT te manda el checklist del día</b> (ya configurado así). Ves exactamente qué toca. Sin tener que pensar — solo ejecutar.</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">Sáb 7am</div>
+        <div class="notion-what"><b>Abres Tareas.xlsx.</b> Marcas qué cumpliste de la semana. 10 min. Eso alimenta tu análisis de patrones cuando uses Python en TripleTen.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notion-section">
+    <div class="notion-hdr">
+      <div class="notion-hdr-label">Plan semanal en Notion — estructura base</div>
+      <div class="notion-hdr-name">Qué va en cada día · 3 tareas máximo · 1 por pilar</div>
+    </div>
+    <div class="notion-body">
+      <div class="notion-row">
+        <div class="notion-when">LUNES</div>
+        <div class="notion-what">📈 Trading: [trade específico o análisis concreto] · 🔬 Datos: [ejercicio TripleTen específico] · 🧠 Personal: Revisar OKR/KPI</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">MARTES</div>
+        <div class="notion-what">📈 Trading: [video Tradeando específico + ScreenApp] · 🩺 Medicina: [caso clínico o tema específico] · 🧠 Personal: Ritual extendido</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">MIÉRCOLES</div>
+        <div class="notion-what">📈 Trading: [sesión o solo observación] · 🔬 Datos: [continuación sprint] · 🍳 Cocina: Fitia → [menú definido]</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">JUEVES</div>
+        <div class="notion-what">🧠 Personal: Curso Ultiself + inglés · 💰 Finanzas: Revisión presupuesto · 📈 Trading: Sesión mañana</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">VIERNES</div>
+        <div class="notion-what">📈 Trading: Cierre semanal + KPI check · 🩺 Medicina: Caso o repaso · 🧠 Personal: Tiempo libre sin culpa</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">SÁBADO</div>
+        <div class="notion-what">📊 Registro Sheets (todos los archivos) · 📈 Tradeando + post-mortem · 🔧 Mecánica Cadillac</div>
+      </div>
+      <div class="notion-row">
+        <div class="notion-when">DOMINGO</div>
+        <div class="notion-what">🍳 Cocina semana · 📈 Contexto mercado + Investing · 🧠 Planning → Gemini → alertas listas</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  Said OS · <span>Q2 2026</span> · v3.0 · 22 Abr 2026<br>
+  "Lo que no se mide sin contexto, se vuelve una carga."
+</div>
+
+</div>
+
+<script>
+function tog(btn) {
+  const body = btn.closest('.app-block').querySelector('.app-block-body');
+  const open = body.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+function togDay(hdr) {
+  const body = hdr.nextElementSibling;
+  const btn = hdr.querySelector('.tog');
+  const open = body.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+// Auto-open today
+const days = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+const today = days[new Date().getDay()];
+document.querySelectorAll('.day-name').forEach(el => {
+  if (el.textContent.trim() === today) togDay(el.closest('.day-hdr'));
+});
+
+// Nav active on scroll
+const sections = document.querySelectorAll('.sec');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+  navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#'+cur); });
+});
+</script>
+</body>
+</html>
